@@ -37,7 +37,14 @@ router.post('/:id/:cd', async (req, res) => {
     });
 
     await log.save()
-    res.send (ans === challenge.answer)
+    const correct = ans === challenge.answer
+
+    if (correct) {
+        challenge.nSolvers = challenge.nSolvers + 1
+        await challenge.save()
+    }
+
+    res.send(correct)
 })
 
 export { router }
