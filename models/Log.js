@@ -9,6 +9,10 @@ const LogSchema = new mongoose.Schema({
         type: String,
         required: true,
     }, 
+    roomNumber: {
+        type: Number,
+        required: true
+    },
     challengeNumber: {
         type: Number,
         required: true
