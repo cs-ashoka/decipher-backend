@@ -12,8 +12,13 @@ const ChallengeSchema = new mongoose.Schema({
     nSolvers: {
         type: Number
     },
+    roomNumber: {
+        type: Number,
+        required: true
+    },
     challengeNumber: {
         type: Number,
+        required: true
     }
 })
 
