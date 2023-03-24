@@ -9,17 +9,14 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    email: {
-        type: String
-    },
-    college: {
-        type: String
+    currentRoom: {
+        type: Number,
     },
     currentChallenge: {
         type: Number,
     },
     challengesSolved: {
-        type: Number,
+        type: Array,
         default: 0
     },
     lastChallengeSolveTime: {
