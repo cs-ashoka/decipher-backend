@@ -3,13 +3,14 @@ import bodyParser from 'body-parser';
 
 import { Log } from '../models/Log.js';
 import { Challenge } from '../models/Challenge.js';
+import isAuthenticated from '../config/middleware.js';
 
 const router = express.Router();
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
 
-router.get('/:id/:cd', async (req, res) => {
+router.get('/:id/:cd', isAuthenticated, async (req, res) => {
     const id = req.params.id
     const cd = req.params.cd
 
@@ -21,7 +22,7 @@ router.get('/:id/:cd', async (req, res) => {
     })
 })
     
-router.post('/:id/:cd', async (req, res) => {
+router.post('/:id/:cd', isAuthenticated, async (req, res) => {
     const id = req.params.id
     const cd = req.params.cd
     const ans = req.body.answer.toLowerCase()
