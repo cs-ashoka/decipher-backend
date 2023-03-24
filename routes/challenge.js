@@ -18,6 +18,16 @@ router.get('/:id/:cd', isAuthenticated, async (req, res) => {
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })    
     const user = await User.findOne({user_id: req.session.passport.user})
 
+    let repeat = false
+
+    user.challengesSolved.forEach(i => {
+        if (i[0] == id && i[1] == cd) {
+            repeat = true
+        }
+    });
+
+    if (repeat) return res.sendStatus(403)
+
     user.currentRoom = id
     user.currentChallenge = cd
     await user.save()
