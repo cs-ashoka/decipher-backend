@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 
 import { Log } from '../models/Log.js';
 import { Challenge } from '../models/Challenge.js';
+import { User } from '../models/User.js';
 import isAuthenticated from '../config/middleware.js';
 
 const router = express.Router();
@@ -15,6 +16,11 @@ router.get('/:id/:cd', isAuthenticated, async (req, res) => {
     const cd = req.params.cd
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })    
+    const user = await User.findOne({user_id: req.session.passport.user})
+
+    user.currentRoom = id
+    user.currentChallenge = cd
+    await user.save()
     res.send({ 
         question: challenge.question, 
         roomNumber: challenge.roomNumber, 
@@ -28,9 +34,10 @@ router.post('/:id/:cd', isAuthenticated, async (req, res) => {
     const ans = req.body.answer.toLowerCase()
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
+    const user = await User.findOne({user_id: req.session.passport.user})
 
     const log = new Log({
-        username: "testuser",
+        username: user.username,
         answer: ans,
         roomNumber: id,
         challengeNumber: cd,
@@ -43,9 +50,18 @@ router.post('/:id/:cd', isAuthenticated, async (req, res) => {
     if (correct) {
         challenge.nSolvers = challenge.nSolvers + 1
         await challenge.save()
+
+        user.currentRoom = 0
+        user.currentChallenge = 0
+        user.challengesSolved = [...user.challengesSolved, [id, cd]]
+        user.lastChallengeSolveTime = new Date()
+        await user.save()
+        
+        res.send(correct)
+    } else {
+        res.send(correct)
     }
 
-    res.send(correct)
 })
 
 export { router }
