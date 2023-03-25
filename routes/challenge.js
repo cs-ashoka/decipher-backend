@@ -34,7 +34,8 @@ router.get('/:id/:cd', isAuthenticated, async (req, res) => {
     res.send({ 
         question: challenge.question, 
         roomNumber: challenge.roomNumber, 
-        challengeNumber: challenge.challengeNumber
+        challengeNumber: challenge.challengeNumber,
+        ...challenge
     })
 })
     
@@ -55,7 +56,21 @@ router.post('/:id/:cd', isAuthenticated, async (req, res) => {
     });
 
     await log.save()
-    const correct = ans === challenge.answer
+
+    let correct = false;
+
+    if (id == 3) {
+        for (i in challenge.answer) {
+            if (ans.includes(i)) {
+                correct = true
+            } else {
+                correct = false
+                break;
+            }
+        }
+    } else {
+        correct = ans == challenge.answer.toLowerCase();
+    }
 
     if (correct) {
         challenge.nSolvers = challenge.nSolvers + 1
