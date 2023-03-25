@@ -11,9 +11,9 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
 
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.post('/:id', isAuthenticated, async (req, res) => {
     const id = req.params.id
-    const cd = req.params.cd
+    if (id != 1 && id != 3) return res.sendStatus(403)
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
     const user = await User.findOne({user_id: req.body.auth})
@@ -23,15 +23,15 @@ router.get('/:id', isAuthenticated, async (req, res) => {
     const maxSolved = 0
 
     user.challengesSolved.filter((x) => (x[0] == id)).forEach((x) => {
-        if (x[1] > maxSolved) {
-            maxSolved = x[1]
+        if (parseInt(x[1]) > maxSolved) {
+            maxSolved = parseInt(x[1])
         }
     });
 
     // if (repeat) return res.sendStatus(403)
 
     user.currentRoom = id
-    user.currentChallenge = cd
+    user.currentChallenge = maxSolved
 
     const resChallenge = await Challenge.findOne({ roomNumber: id, challengeNumber: maxSolved })
     await user.save()
@@ -43,10 +43,10 @@ router.get('/:id', isAuthenticated, async (req, res) => {
     })
 })
     
-router.post('/:id/:cd', isAuthenticated, async (req, res) => {
+router.post('/:id/solve', isAuthenticated, async (req, res) => {
     const id = req.params.id
-    const cd = req.params.cd
     const ans = req.body.answer.toLowerCase()
+    const cd = req.body.challengeNumber
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
     const user = await User.findOne({user_id: req.body.auth})
