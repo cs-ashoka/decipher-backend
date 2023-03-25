@@ -16,7 +16,7 @@ router.get('/:id/:cd', isAuthenticated, async (req, res) => {
     const cd = req.params.cd
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })    
-    const user = await User.findOne({user_id: req.session.passport.user})
+    const user = await User.findOne({user_id: req.body.auth})
 
     let repeat = false
 
@@ -45,7 +45,7 @@ router.post('/:id/:cd', isAuthenticated, async (req, res) => {
     const ans = req.body.answer.toLowerCase()
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
-    const user = await User.findOne({user_id: req.session.passport.user})
+    const user = await User.findOne({user_id: req.body.auth})
 
     const log = new Log({
         username: user.username,
