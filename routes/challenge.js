@@ -15,11 +15,10 @@ router.post('/:id', isAuthenticated, async (req, res) => {
     const id = req.params.id
     if (id != 1 && id != 3) return res.sendStatus(403)
 
-    const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
     const user = await User.findOne({user_id: req.body.auth})
-
+    
     let repeat = false
-
+    
     const maxSolved = 0
 
     user.challengesSolved.filter((x) => (x[0] == id)).forEach((x) => {
@@ -27,7 +26,7 @@ router.post('/:id', isAuthenticated, async (req, res) => {
             maxSolved = parseInt(x[1])
         }
     });
-
+    
     // if (repeat) return res.sendStatus(403)
 
     user.currentRoom = id
