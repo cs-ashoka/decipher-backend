@@ -18,8 +18,6 @@ mongoose.connect(db)
 app.use(cors());
 app.use(json());
 
-app.use(checkHosts);
-
 app.use(session({
     secret: `${process.env.SESSION_SECRET}`,
     saveUninitialized: false,
