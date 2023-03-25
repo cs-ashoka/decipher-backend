@@ -19,7 +19,7 @@ router.post('/:id', isAuthenticated, async (req, res) => {
     
     let repeat = false
     
-    const maxSolved = 0
+    let maxSolved = 0
 
     user.challengesSolved.filter((x) => (x[0] == id)).forEach((x) => {
         if (parseInt(x[1]) > maxSolved) {
