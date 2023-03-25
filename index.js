@@ -18,15 +18,6 @@ mongoose.connect(db)
 app.use(cors());
 app.use(json());
 
-const allowedHosts = ["https://decipher-banjaara.netlify.app", "https://decipher-backend.vercel.app/"];
-const checkHosts = (req, res, next) => {
-  if (allowedHosts.includes(req.hostname)) {
-    return next();
-  }
-
-  return res.sendStatus(403);
-};
-
 app.use(checkHosts);
 
 app.use(session({
