@@ -37,8 +37,7 @@ router.post('/:id', isAuthenticated, async (req, res) => {
     res.send({ 
         question: resChallenge.question, 
         roomNumber: resChallenge.roomNumber, 
-        challengeNumber: resChallenge.challengeNumber,
-        ...challenge
+        challengeNumber: resChallenge.challengeNumber
     })
 })
     
