@@ -11,30 +11,34 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
 
-router.get('/:id/:cd', isAuthenticated, async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
     const id = req.params.id
     const cd = req.params.cd
 
-    const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })    
+    const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
     const user = await User.findOne({user_id: req.body.auth})
 
     let repeat = false
 
-    user.challengesSolved.forEach(i => {
-        if (i[0] == id && i[1] == cd) {
-            repeat = true
+    const maxSolved = 0
+
+    user.challengesSolved.filter((x) => (x[0] == id)).forEach((x) => {
+        if (x[1] > maxSolved) {
+            maxSolved = x[1]
         }
     });
 
-    if (repeat) return res.sendStatus(403)
+    // if (repeat) return res.sendStatus(403)
 
     user.currentRoom = id
     user.currentChallenge = cd
+
+    const resChallenge = await Challenge.findOne({ roomNumber: id, challengeNumber: maxSolved })
     await user.save()
     res.send({ 
-        question: challenge.question, 
-        roomNumber: challenge.roomNumber, 
-        challengeNumber: challenge.challengeNumber,
+        question: resChallenge.question, 
+        roomNumber: resChallenge.roomNumber, 
+        challengeNumber: resChallenge.challengeNumber,
         ...challenge
     })
 })
