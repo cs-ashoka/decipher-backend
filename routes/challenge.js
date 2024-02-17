@@ -43,7 +43,7 @@ router.post('/:id', isAuthenticated, async (req, res) => {
     
 router.post('/:id/solve', isAuthenticated, async (req, res) => {
     const id = req.params.id
-    const ans = req.body.answer.toLowerCase()
+    const ans = req.body.answer.toLowerCase().trim().split(' ').join('');
     const cd = req.body.challengeNumber
 
     const challenge = await Challenge.findOne({ roomNumber: id, challengeNumber: cd })
@@ -59,20 +59,7 @@ router.post('/:id/solve', isAuthenticated, async (req, res) => {
 
     await log.save()
 
-    let correct = false;
-
-    if (id == 3) {
-        for (i in challenge.answer) {
-            if (ans.includes(i)) {
-                correct = true
-            } else {
-                correct = false
-                break;
-            }
-        }
-    } else {
-        correct = ans == challenge.answer.toLowerCase();
-    }
+    const correct = ans == challenge.answer.toLowerCase().trim().split(' ').join('');
 
     if (correct) {
         challenge.nSolvers = challenge.nSolvers + 1
@@ -84,9 +71,9 @@ router.post('/:id/solve', isAuthenticated, async (req, res) => {
         user.lastChallengeSolveTime = new Date()
         await user.save()
         
-        res.send(correct)
+        res.status(201).send(correct)
     } else {
-        res.send(correct)
+        res.status(201).send(correct)
     }
 
 })
