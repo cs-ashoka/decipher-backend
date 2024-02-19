@@ -15,7 +15,7 @@ router.post("/:id", isAuthenticated, async (req, res) => {
   const id = req.params.id;
   if (id != 1 && id != 2 && id != 3) return res.sendStatus(403);
 
-  const user = await User.findOne({ user_id: req.body.auth });
+  const user = await User.findOne({ user_id: req.user.user_id });
 
   let repeat = false;
 
@@ -70,7 +70,7 @@ router.post("/:id/solve", isAuthenticated, async (req, res) => {
     return res.status(401).send(false);
   }
 
-  const user = await User.findOne({ user_id: req.body.auth });
+  const user = await User.findOne({ user_id: req.user.user_id });
 
   const log = new Log({
     username: user.username,
