@@ -67,7 +67,7 @@ router.post("/:id/solve", isAuthenticated, async (req, res) => {
   });
 
   if (!challenge.answer) {
-    return res.status(401).send(false);
+    return res.status(201).send(false);
   }
 
   const user = await User.findOne({ user_id: req.user.user_id });
@@ -97,7 +97,7 @@ router.post("/:id/solve", isAuthenticated, async (req, res) => {
 
     res.status(201).send(correct);
   } else {
-    res.status(401).send(correct);
+    res.status(201).send(correct);
   }
 });
 
