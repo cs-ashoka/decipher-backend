@@ -8,32 +8,65 @@ import { router as index } from "../routes/index.js";
 import { router as auth } from "../routes/auth.js";
 import { router as challenge } from "../routes/challenge.js";
 import mongoose from "mongoose";
+import MongoDBStore from "connect-mongodb-session";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const db = process.env.MONGO_URI
-mongoose.connect(db)
+const db = process.env.MONGO_URI;
+mongoose.connect(db);
 
-app.use(cors());
+const mongoStore = MongoDBStore(session);
+
+const store = new mongoStore({
+  collection: "userSessions",
+  uri: db,
+  expires: 24 * 60 * 60 * 1000,
+});
+
+app.use(
+  cors({
+    origin:
+      process.NODE_ENV === "production"
+        ? "https://decipher-banjaara.netlify.app"
+        : "http://localhost:4200",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
 app.use(json());
 
-app.use(session({
+app.use(
+  session({
+    name: "email-auth",
     secret: `${process.env.SESSION_SECRET}`,
-    saveUninitialized: false,
     resave: false,
-    name: "email-auth"
-}))
+    saveUninitialized: false,
+    store,
+    // Because https redirect
+    proxy: process.env.NODE_ENV === "production",
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? "decipher-backend.vercel.app"
+          : "localhost",
+    },
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-import "../config/passport.js"
+import "../config/passport.js";
 
-app.use('/', index)
-app.use('/auth', auth)
-app.use('/play', challenge)
- 
+app.use("/", index);
+app.use("/auth", auth);
+app.use("/play", challenge);
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
+  console.log(`Server is running on port: ${PORT}`);
 });
