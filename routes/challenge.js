@@ -13,7 +13,7 @@ router.use(bodyParser.urlencoded());
 
 router.post('/:id', isAuthenticated, async (req, res) => {
     const id = req.params.id
-    if (id != 1 && id != 3) return res.sendStatus(403)
+    if (id != 1 && id != 2 && id != 3) return res.sendStatus(403)
 
     const user = await User.findOne({user_id: req.body.auth})
     
