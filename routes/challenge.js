@@ -67,7 +67,7 @@ router.post("/:id/solve", isAuthenticated, async (req, res) => {
   });
 
   if (!challenge.answer) {
-    return res.status(404).send({ msg: "Challenge not found" });
+    return res.status(401).send(false);
   }
 
   const user = await User.findOne({ user_id: req.body.auth });

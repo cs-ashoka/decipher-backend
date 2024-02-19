@@ -24,16 +24,37 @@ const store = new mongoStore({
   expires: 24 * 60 * 60 * 1000,
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      process.NODE_ENV === "production"
+        ? "https://decipher-banjaara.netlify.app"
+        : "http://localhost:4200",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
 app.use(json());
 
 app.use(
   session({
-    secret: `${process.env.SESSION_SECRET}`,
-    saveUninitialized: false,
-    resave: false,
     name: "email-auth",
+    secret: `${process.env.SESSION_SECRET}`,
+    resave: false,
+    saveUninitialized: false,
     store,
+    // Because https redirect
+    proxy: process.env.NODE_ENV === "production",
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? "decipher-backend.vercel.app"
+          : "localhost",
+    },
   })
 );
 
