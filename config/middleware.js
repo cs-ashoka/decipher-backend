@@ -1,6 +1,6 @@
 export default (req, res, next) => {
-    if (req.body.auth) {
-        return next()
-    }
-    return res.sendStatus(403)
-}
+  if (req.user) {
+    return next();
+  }
+  return res.sendStatus(403);
+};
