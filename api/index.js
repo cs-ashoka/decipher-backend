@@ -26,18 +26,18 @@ const store = new mongoStore({
 
 // uncomment once testing is complete
 
-// app.use(
-//   cors({
-//     origin:
-//       process.NODE_ENV === "production"
-//         ? "https://decipher-banjaara.netlify.app"
-//         : "http://localhost:4200",
-//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin:
+      process.NODE_ENV === "production"
+        ? "https://decipher-banjaara.netlify.app"
+        : "http://localhost:4200",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
 
-app.use(cors());
+// app.use(cors());
 app.use(json());
 
 app.use(
