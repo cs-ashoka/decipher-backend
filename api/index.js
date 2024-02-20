@@ -24,16 +24,20 @@ const store = new mongoStore({
   expires: 24 * 60 * 60 * 1000,
 });
 
-app.use(
-  cors({
-    origin:
-      process.NODE_ENV === "production"
-        ? "https://decipher-banjaara.netlify.app"
-        : "http://localhost:4200",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
+// uncomment once testing is complete
+
+// app.use(
+//   cors({
+//     origin:
+//       process.NODE_ENV === "production"
+//         ? "https://decipher-banjaara.netlify.app"
+//         : "http://localhost:4200",
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
 app.use(json());
 
 app.use(
