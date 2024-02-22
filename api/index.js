@@ -24,12 +24,28 @@ const store = new mongoStore({
   expires: 24 * 60 * 60 * 1000,
 });
 
+const allowedDomains = [
+  "http://localhost:4200",
+  "https://decipher-banjaara.netlify.app",
+];
+
 // uncomment once testing is complete
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? "https://decipher-banjaara.netlify.app"
-      : "http://localhost:4200",
+  // origin:
+  //   process.env.NODE_ENV === "production"
+  //     ? "https://decipher-banjaara.netlify.app"
+  //     : "http://localhost:4200",
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+    const index = allowedDomains.indexOf(origin);
+    if (index === -1) {
+      var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, allowedDomains[index]);
+  },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 };
