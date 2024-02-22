@@ -25,17 +25,18 @@ const store = new mongoStore({
 });
 
 // uncomment once testing is complete
+const corsOptions = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://decipher-banjaara.netlify.app"
+      : "http://localhost:4200",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
 
-app.use(
-  cors({
-    origin:
-      process.NODE_ENV === "production"
-        ? "https://decipher-banjaara.netlify.app"
-        : "http://localhost:4200",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
+console.log("Using cors options: ", corsOptions);
+
+app.use(cors(corsOptions));
 
 // app.use(cors());
 app.use(json());
@@ -53,7 +54,7 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       domain:
         process.env.NODE_ENV === "production"
           ? "decipher.berlm.me"
