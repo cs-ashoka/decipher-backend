@@ -56,7 +56,7 @@ app.use(
       sameSite: "lax",
       domain:
         process.env.NODE_ENV === "production"
-          ? "decipher-backend.vercel.app"
+          ? "decipher.berlm.me"
           : "localhost",
     },
   })
