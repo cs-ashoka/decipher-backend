@@ -73,7 +73,7 @@ app.use(
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       domain:
         process.env.NODE_ENV === "production"
-          ? "decipher.berlm.me"
+          ? "decipher-backend.onrender.com"
           : "localhost",
     },
   })
