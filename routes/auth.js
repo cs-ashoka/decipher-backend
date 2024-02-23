@@ -1,6 +1,6 @@
 import passport from "passport";
 import express from "express";
-import isAuthenticated from "../config/middleware.js";
+import isAuthenticated from "../config/authMiddleware.js";
 
 import { User } from "../models/User.js";
 

@@ -4,14 +4,15 @@ import bodyParser from "body-parser";
 import { Log } from "../models/Log.js";
 import { Challenge } from "../models/Challenge.js";
 import { User } from "../models/User.js";
-import isAuthenticated from "../config/middleware.js";
+import isAuthenticated from "../config/authMiddleware.js";
+import hasNotFinished from "../config/finMiddleware.js";
 
 const router = express.Router();
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
 
-router.post("/:id", isAuthenticated, async (req, res) => {
+router.post("/:id", isAuthenticated, hasNotFinished, async (req, res) => {
   const id = req.params.id;
   if (id != 1 && id != 2 && id != 3) return res.sendStatus(403);
 
@@ -53,7 +54,7 @@ router.post("/:id", isAuthenticated, async (req, res) => {
   });
 });
 
-router.post("/:id/solve", isAuthenticated, async (req, res) => {
+router.post("/:id/solve", isAuthenticated, hasNotFinished, async (req, res) => {
   const id = req.params.id;
   if (!req.body.answer || req.body.challengeNumber === undefined) {
     return res.sendStatus(400);
