@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
 
-router.post("/:id", isAuthenticated, hasNotFinished, async (req, res) => {
+router.post("/:id", isAuthenticated, async (req, res) => {
   const id = req.params.id;
   if (id != 1 && id != 2 && id != 3) return res.sendStatus(403);
 
@@ -54,7 +54,7 @@ router.post("/:id", isAuthenticated, hasNotFinished, async (req, res) => {
   });
 });
 
-router.post("/:id/solve", isAuthenticated, hasNotFinished, async (req, res) => {
+router.post("/:id/solve", isAuthenticated, async (req, res) => {
   const id = req.params.id;
   if (!req.body.answer || req.body.challengeNumber === undefined) {
     return res.sendStatus(400);
