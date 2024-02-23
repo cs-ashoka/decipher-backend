@@ -26,7 +26,7 @@ const store = new mongoStore({
 
 const allowedDomains = [
   "http://localhost:4200",
-  "https://decipher-banjaara.netlify.app",
+  "https://decipher-equilibrium.netlify.app",
 ];
 
 // uncomment once testing is complete
