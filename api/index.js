@@ -9,6 +9,10 @@ import { router as auth } from "../routes/auth.js";
 import { router as challenge } from "../routes/challenge.js";
 import mongoose from "mongoose";
 import MongoDBStore from "connect-mongodb-session";
+import { Strategy } from "passport-local";
+import morgan from "morgan";
+
+import { User } from "../models/User.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,6 +60,7 @@ app.use(cors(corsOptions));
 
 // app.use(cors());
 app.use(json());
+app.use(morgan("dev"));
 
 app.use(
   session({
@@ -82,7 +87,35 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-import "../config/passport.js";
+passport.use(
+  new Strategy(async (username, password, done) => {
+    const user = await User.findOne({ username: username });
+
+    if (!user) {
+      return done(null, false, { message: "User not found" });
+    }
+
+    // only use non-hashed in case passwds are manually given to users else compare hashed passwds with bcrypt
+    if (password === user.password) {
+      return done(null, user);
+    }
+
+    return done(null, false, { message: "Incorrect password" });
+  })
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
 
 app.use("/", index);
 app.use("/auth", auth);

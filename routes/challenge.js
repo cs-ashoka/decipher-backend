@@ -55,50 +55,55 @@ router.post("/:id", isAuthenticated, async (req, res) => {
 });
 
 router.post("/:id/solve", isAuthenticated, async (req, res) => {
-  const id = req.params.id;
-  if (!req.body.answer || req.body.challengeNumber === undefined) {
-    return res.sendStatus(400);
-  }
-  const ans = req.body.answer.toLowerCase().trim().split(" ").join("");
-  const cd = req.body.challengeNumber;
+  try {
+    const id = req.params.id;
+    if (!req.body.answer || req.body.challengeNumber === undefined) {
+      return res.sendStatus(400);
+    }
+    console.log(`Id: ${id} | Body: ${JSON.stringify(req.body)}`);
+    const ans = req.body.answer.toLowerCase().trim().split(" ").join("");
+    const cd = req.body.challengeNumber;
 
-  const challenge = await Challenge.findOne({
-    roomNumber: id,
-    challengeNumber: cd,
-  });
+    const challenge = await Challenge.findOne({
+      roomNumber: id,
+      challengeNumber: cd,
+    });
 
-  if (!challenge.answer) {
-    return res.status(201).send(false);
-  }
+    if (!challenge.answer) {
+      return res.status(201).send(false);
+    }
 
-  const user = await User.findOne({ user_id: req.user.user_id });
+    const user = await User.findOne({ user_id: req.user.user_id });
 
-  const log = new Log({
-    username: user.username,
-    answer: ans,
-    roomNumber: id,
-    challengeNumber: cd,
-    time: new Date(),
-  });
+    const log = new Log({
+      username: user.username,
+      answer: ans,
+      roomNumber: id,
+      challengeNumber: cd,
+      time: new Date(),
+    });
 
-  await log.save();
+    await log.save();
 
-  const correct =
-    ans == challenge.answer.toLowerCase().trim().split(" ").join("");
+    const correct =
+      ans == challenge.answer.toLowerCase().trim().split(" ").join("");
 
-  if (correct) {
-    challenge.nSolvers = challenge.nSolvers + 1;
-    await challenge.save();
+    if (correct) {
+      challenge.nSolvers = challenge.nSolvers + 1;
+      await challenge.save();
 
-    user.currentRoom = 0;
-    user.currentChallenge = 0;
-    user.challengesSolved = [...user.challengesSolved, [id, cd]];
-    user.lastChallengeSolveTime = new Date();
-    await user.save();
+      user.currentRoom = 0;
+      user.currentChallenge = 0;
+      user.challengesSolved = [...user.challengesSolved, [id, cd]];
+      user.lastChallengeSolveTime = new Date();
+      await user.save();
 
-    res.status(201).send(correct);
-  } else {
-    res.status(201).send(correct);
+      res.status(201).send(correct);
+    } else {
+      res.status(201).send(correct);
+    }
+  } catch (e) {
+    res.status(400).send({ msg: e });
   }
 });
 
