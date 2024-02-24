@@ -60,6 +60,7 @@ router.post("/:id/solve", isAuthenticated, async (req, res) => {
     if (!req.body.answer || req.body.challengeNumber === undefined) {
       return res.sendStatus(400);
     }
+    console.log(`Id: ${id} | Body: ${JSON.stringify(req.body)}`);
     const ans = req.body.answer.toLowerCase().trim().split(" ").join("");
     const cd = req.body.challengeNumber;
 
